@@ -10,7 +10,7 @@ import {themes as prismThemes} from 'prism-react-renderer';
 const config = {
   title: 'Friendly Fire Docs',
   tagline: 'คู่มือประกอบการใช้งานสำหรับสินค้าที่ทุกพัฒนาขึ้นโดย ทีม Friendly Fire Studio',
-  url: 'https://friendlyfire-studio.github.io/friendlyfire-docs/',
+  url: 'https://friendlyfire-studio.github.io',
   baseUrl: '/friendlyfire-docs/',
   favicon: 'img/logo.ico',
   onBrokenLinks: 'throw',

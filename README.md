@@ -1,6 +1,6 @@
 # Friendly Fire Docs
 
-**[View the docs →](https://docs.azael.dev/)**
+**[View the docs →](https://friendlyfire-studio.github.io/friendlyfire-docs/)**
 
 ### Introduction
 This website is built using [Docusaurus](https://docusaurus.io/), a modern static website generator.
