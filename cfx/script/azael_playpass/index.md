@@ -1,0 +1,78 @@
+# azael_playpass
+
+ระบบจัดการการเชื่อมต่อของผู้เล่นอย่างมีประสิทธิภาพ ด้วยการตรวจสอบสิทธิ์ผ่าน [Discord API](./config/external_api.md#discord) หรือ [Custom API](./config/external_api.md#custom) และมีระบบ [Queue](./config/queue.md) เข้าร่วมเซิร์ฟเวอร์ ช่วยลดภาระเซิร์ฟเวอร์ในช่วงที่มีผู้เล่นหนาแน่น ควบคุมปริมาณการเข้าเล่นได้อย่างยืดหยุ่น เพิ่มความเสถียรและมอบประสบการณ์ที่ดีขึ้นให้กับผู้เล่น รองรับการใช้งานทั้งบนเซิร์ฟเวอร์ [FiveM](https://fivem.net/) และ [RedM](https://redm.net/)
+
+:::info
+
+- ทรัพยากรนี้เป็นเวอร์ชันใหม่ของ **azael_dc-whitelisted** ซึ่งมีการเปลี่ยนชื่อและถูกเขียนใหม่ทั้งหมด โดยยังคงจุดประสงค์หลักของผลิตภัณฑ์เดิมไว้ การพัฒนาครั้งนี้ปรับปรุงประสิทธิภาพ เพิ่มความยืดหยุ่น และรองรับการใช้งานที่ทันสมัยยิ่งขึ้น
+- หากผู้ใช้ต้องการดูเอกสารสำหรับ **azael_dc-whitelisted** สามารถดูได้ที่ [**เอกสารเวอร์ชันเก่า**](https://docs-old.azael.dev/docs/azael_dc-whitelisted)
+
+:::
+
+## ความต้องการ
+
+### เซิร์ฟเวอร์
+
+- เวอร์ชัน [**FXServer**](https://runtime.fivem.net/artifacts/fivem/build_server_windows/master) ขั้นต่ำ **`12933`**
+- เปิดใช้งาน [**OneSync**](https://docs.fivem.net/docs/scripting-reference/onesync)
+
+### ทรัพยากร
+
+- [**oxmysql**](https://github.com/CommunityOx/oxmysql)
+
+:::tip
+
+- หากคุณไม่ได้ใช้งาน [**oxmysql**](https://github.com/CommunityOx/oxmysql) คุณสามารถดูรายละเอียดได้ที่ไฟล์ [**`./modules/database/server.lua`**](./modules/database/server.md)
+
+:::
+
+:::info
+
+ทรัพยากร [**azael_playpass**](https://cfx.azael.dev/digishop/playpass/) ตั้งแต่เวอร์ชัน `5.0.1` เป็นต้นไป สามารถทำงานร่วมกับ [**nc_PROTECT+**](https://fivem.nc-developer.com/product/62517d4c2d7b0), [**bt_defender**](https://betters.dev/) และ **Anti-Cheat** จากผู้ให้บริการอื่น ๆ ได้โดยตรง
+โดย **ไม่จำเป็นต้องเพิ่ม `azael_playpass` ในรายการยกเว้น (Ignore / Whitelist)** อีกต่อไป
+
+:::
+
+:::warning
+
+สำหรับผู้ที่ใช้งานเวอร์ชัน **ต่ำกว่า `5.0.1`** อาจพบปัญหา *Deadloop* ที่ฝั่ง Client หรือการค้างที่หน้า [Loading Screen](https://docs.fivem.net/docs/scripting-manual/nui-development/loading-screens/) เมื่อใช้งานร่วมกับทรัพยากร **Anti-Cheat** จากผู้ให้บริการอื่น ๆ
+
+ในกรณีดังกล่าว จำเป็นต้องเพิ่ม `azael_playpass` ในรายการยกเว้น (Ignore / Whitelist) ของทรัพยากร **Anti-Cheat** ที่กำลังใช้งาน
+
+:::
+
+## ติดตั้งและใช้งาน
+
+1. ดาวน์โหลดและแตกไฟล์ลงในโฟลเดอร์ **resources** ของคุณ
+2. ชื่อของทรัพยากรจะต้องเป็น **azael_playpass** ห้ามแก้ไขโดยเด็ดขาด
+3. ไปยังโฟลเดอร์ **config** และดำเนินการเปิดไฟล์ [**auth.lua**](./config/auth.md) เพื่อระบุ [**Token**](./config/auth.md#producttoken) ของผลิตภัณฑ์
+4. ไปยังไฟล์ **server.cfg** และทำการเพิ่ม `ensure azael_playpass`
+
+```diff title="server.cfg"
+ensure azael_playpass
+```
+
+5. โปรดดำเนินการตามขั้นตอนเพิ่มเติมใน “[**คู่มือการติดตั้ง**](./tutorials.md#installation)”
+
+:::tip
+
+- ระบบจะดำเนินการตรวจสอบและติดตั้งฐานข้อมูล (**SQL**) ของทรัพยากรนี้โดยอัตโนมัติ
+    - หากใช้งาน **azael_dc-whitelisted** มาก่อนและเปลี่ยนมาใช้ทรัพยากรนี้ ระบบจะดำเนินการคัดลอกข้อมูลจากตาราง **`azael_dc_whitelisted`** มายัง **`azael_playpass`** เมื่อเริ่มต้นทรัพยากรนี้ในครั้งแรก
+    - ดูรายละเอียดของรหัสได้ที่ไฟล์ [**`./modules/database/server.lua`**](./modules/database/server.md) ฟังก์ชัน [**Database.setupTables**](./modules/database/server.md#setuptables)
+
+:::
+
+:::caution
+
+- หากเซิร์ฟเวอร์ของคุณมีผู้เล่นออนไลน์อยู่เป็นจำนวนมาก โปรดหลีกเลี่ยงการรีสตาร์ททรัพยากรนี้
+
+:::
+
+## ยกเลิกใช้งาน
+
+1. ไปยังไฟล์ `server.cfg` และค้นหา `ensure azael_playpass`
+2. ทำการเพิ่ม `#` ไว้ข้างหน้า `ensure azael_playpass`
+
+```diff title="server.cfg"
+#ensure azael_playpass
+```

@@ -1,0 +1,474 @@
+---
+sidebar_label: Core
+---
+
+# Core
+
+การกำหนดค่าหลักของทรัพยากรนี้
+
+## locale
+
+ภาษาที่ต้องการใช้งาน
+
+```lua title="บรรทัดที่ 19"
+locale = 'th'
+```
+
+- locale: `string`
+    - เส้นทางไฟล์ `./locales/<langcode>.json`
+
+## authMethod
+
+ประเภทการตรวจสอบสิทธิ์การเชื่อมต่อที่ต้องการใช้งาน
+
+```lua title="บรรทัดที่ 21"
+authMethod = AUTH_METHOD.EXTERNAL_API
+```
+
+- authMethod: `integer`
+    - AUTH_METHOD: ข้อมูลการกำหนดค่าเกี่ยวกับประเภทการตรวจสอบสิทธิ์การเชื่อมต่อ (ถูกกำหนดมาจากภายในสคริปต์)
+        - DISABLE: ปิดใช้งานการตรวจสอบสิทธิ์การเชื่อมต่อ
+        - DATABASE: การตรวจสอบสิทธิ์จากตัวระบุ (identifier) ในฐานข้อมูลของเซิร์ฟเวอร์ที่ตาราง azael_playpass คอลัมน์ identifier
+        - EXTERNAL_API: การตรวจสอบสิทธิ์ผ่าน API ภายนอก เช่น Discord API หรือ Custom API โดยใช้ HTTP Request เพื่อร้องขอข้อมูล (กำหนดค่าที่ไฟล์ [`./config/external_api.lua`](./external_api.md))
+
+## maintenanceMode
+
+เปิดใช้งานโหมดปิดปรับปรุงเซิร์ฟเวอร์ โดยผู้เล่นที่ไม่มีสิทธิ์จะไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้
+
+```lua title="บรรทัดที่ 26"
+maintenanceMode = false
+```
+
+- maintenanceMode: `boolean`
+    - กำหนดสิทธิ์ให้บทบาทที่อนุญาตได้ที่การกำหนค่า [permissions](./core.md#permissions) สำหรับ [skipRules](./core.md#skiprules) ประเภท `maintenance_mode`
+
+## userProfileCard
+
+เปิดใช้งานการแสดงโปรไฟล์ข้อมูลบัญชีของผู้เล่นเมื่อเชื่อมต่อ
+
+```lua title="บรรทัดที่ 29"
+userProfileCard = true
+```
+
+- userProfileCard: `boolean`
+    - กำหนดค่าเพิ่มเติมที่ไฟล์ [`./config/profile.lua`](./profile.md) และปรับเเต่ง [Adaptive Cards](https://adaptivecards.io/) ได้ที่ `./modules/profile/templates`
+
+## connectionQueue
+
+เปิดใช้งานระบบคิวการเชื่อมต่อ
+
+```lua title="บรรทัดที่ 32"
+connectionQueue = true
+```
+
+- connectionQueue: `boolean`
+    - กำหนดค่าเพิ่มเติมที่ไฟล์ [`./config/queue.lua`](./queue.md)
+
+## identifierType
+
+ตัวระบุของผู้เล่นที่ต้องการใช้งาน
+
+```lua title="บรรทัดที่ 35"
+identifierType = 'discord'
+```
+
+- identifierType: `string`
+    - ประเภทตัวระบุที่รองรับ [steam](https://steampowered.com/), [discord](https://discord.com/), [license](https://www.rockstargames.com/), [license2](https://www.rockstargames.com/), [fivem](https://forum.cfx.re/)
+
+:::warning
+
+จำเป็นจะต้องกำหนดตัวระบุ [**discord**](https://discord.com/) หากคุณใช้งานการตรวจสอบสิทธิ์อนุญาตให้เข้าร่วมกับเซิร์ฟเวอร์โดย Discord API 
+
+:::
+
+## bindIdentifier
+
+ผูกตัวระบุที่ต้องการเข้ากับตัวระบุที่กำหนดใน [`identifierType`](./core.md#identifiertype) เพื่อป้องกันการใช้บัญชีซ้ำหรือแจกจ่ายสิทธิ์ในการเชื่อมต่อกับเซิร์ฟเวอร์
+
+```lua title="บรรทัดที่ 38"
+bindIdentifier = {
+    enable = true,
+    type = 'steam'
+}
+```
+
+- enable: `boolean`
+    - เปิดใช้งานการผูกตัวระบุ (แนะนำให้เปิดใช้งานเพื่อป้องกันการแจกจ่ายสิทธิ์เชื่อมต่อกับเซิร์ฟเวอร์)
+- type: `string`
+    - ประเภทของตัวระบุที่ใช้ในการผูกบัญชี
+        - ประเภทตัวระบุที่รองรับ [steam](https://steampowered.com/), [discord](https://discord.com/), [license](https://www.rockstargames.com/), [license2](https://www.rockstargames.com/), [fivem](https://forum.cfx.re/)
+
+:::danger
+
+โปรดหลีกเลี่ยงการใช้งานประเภทตัวระบุเดียวกันกับที่กำหนดใน [`identifierType`](./core.md#identifiertype) เพราะอาจเกิดข้อผิดพลาดได้
+
+:::
+
+## maxPingLimit
+
+กำหนดค่า [Ping](https://en.wikipedia.org/wiki/Ping_(networking_utility)) สูงสุดที่อนุญาตให้ผู้เล่นเข้าร่วมกับเซิร์ฟเวอร์
+
+```lua title="บรรทัดที่ 43"
+maxPingLimit = 500
+```
+
+- maxPingLimit: `integer`
+    - ระบุ **`0`** เพื่อปิดการตรวจสอบค่า Ping
+
+## connectionAttemptLimit
+
+ป้องกันการเชื่อมต่อบ่อยและเร็วเกินกำหนด
+
+```lua title="บรรทัดที่ 45"
+connectionAttemptLimit = {
+    enable = true,
+    maxAttempts = 3,
+    cooldownTime = 10,
+    blockDuration = 300
+}
+```
+
+- enable: `boolean`
+    - เปิดใช้งานป้องกันการเชื่อมต่อบ่อยและเร็วเกินกำหนด
+- maxAttempts: `integer`
+    - จำนวนครั้งที่ผู้เล่นพยายามเชื่อมต่อสูงสุดที่อนุญาตก่อนที่จะถูกบล็อกชั่วคราว
+- cooldownTime: `integer`
+    - ระยะเวลาคูลดาวน์ที่ต้องรอก่อนที่จะสามารถเชื่อมต่อใหม่ได้ (หน่วยเป็น **วินาที**)
+- blockDuration: `integer`
+    - ระยะเวลาที่ผู้เล่นจะถูกบล็อกหลังจากพยายามเชื่อมต่อเกินจำนวนที่อนุญาต (หน่วยเป็น **วินาที**)
+
+## banPlayerHwids
+
+การแบน HWIDs ของผู้เล่น ([Player Tokens](https://docs.fivem.net/natives/?_0x54C06897))
+
+```lua title="บรรทัดที่ 52"
+banPlayerHwids = {
+    enable = true,
+    strict = true,
+    matches = 2
+}
+```
+
+- enable: `boolean`
+    - เปิดใช้งานระบบแบน HWIDs ผู้เล่น ([Player Tokens](https://docs.fivem.net/natives/?_0x54C06897))
+- strict: `boolean`
+    - เปิดใช้งานการจับคู่ HWID แบบเข้มงวด เมื่อตรวจพบ HWID ที่ถูกแบนตั้งเเต่ 2 Tokens ขึ้นไป และ Tokens ที่ตรวจพบจะต้องมาจากผู้เล่นเดียวกัน
+- matches: `integer`
+    - จำนวนการจับคู่ HWID ที่ต้องตรงกับ HWID ที่ถูกแบน หากจับคู่ครบตามจำนวนจะถือว่าผู้เล่นถูกแบน
+        - ผู้เล่นส่วนใหญ่จะมี [HWID Tokens](https://docs.fivem.net/natives/?_0x54C06897) ประมาณ 3 ถึง 6 รายการ
+
+
+:::info
+
+[Player Tokens](https://docs.fivem.net/natives/?_0x54C06897) หรือที่นิยมเรียกกันว่า HWIDs คือรหัสเฉพาะที่ [FXServer](https://github.com/citizenfx/fivem/blob/60beca63fbd365f7900170aa71f9798325f03609/code/components/citizen-server-impl/src/PlayerScriptFunctions.cpp#L85) สร้างขึ้นจากข้อมูลฝั่งเครื่องของผู้เล่น ([Client-side](https://en.wikipedia.org/wiki/Client-side)). อย่างไรก็ตาม แหล่งข้อมูลที่ใช้สร้าง Token ไม่ได้ถูกระบุไว้อย่างชัดเจนในเอกสารสาธารณะ จึงไม่ควรตีความโดยตรงว่าเป็น “ข้อมูลฮาร์ดแวร์” เสมอไป — HWIDs ถูกออกแบบมาเพื่อบ่งชี้ความเชื่อมโยงหรือความเป็นไปได้ที่ไคลเอนต์เดียวกันถูกใช้งาน มากกว่าจะเป็นการระบุฮาร์ดแวร์จริงโดยตรง
+
+:::
+
+:::warning
+
+[Player Tokens](https://docs.fivem.net/natives/?_0x54C06897) อาจไม่ถูกต้อง 100% ซึ่งอาจทำให้ Tokens จากผู้เล่นสองคนตรงกันโดยไม่เกี่ยวข้องกัน จึงแนะนำให้กำหนด matches เป็น 2 หรือ 3 เพื่อป้องกันการแบนผิดพลาด
+
+:::
+
+:::danger
+
+[Player Tokens](https://docs.fivem.net/natives/?_0x54C06897) จะมีความเฉพาะเจาะจงกับแต่ละเซิร์ฟเวอร์เท่านั้น จึงไม่สามารถนำไปใช้ตรวจสอบหรือบังคับใช้การแบนแบบ Global ได้โดยตรง  
+
+:::
+
+## autoBanAssociated
+
+โหมดการแบนผู้เล่นที่เกี่ยวข้องกับผู้เล่นที่ถูกแบน จะทำการแบนอัตโนมัติเมื่อพบข้อมูลที่ตรงกับผู้เล่นที่ถูกแบนในฐานข้อมูลของเซิร์ฟเวอร์
+
+```lua title="บรรทัดที่ 59"
+autoBanAssociated = {
+    boundId = true,
+    hwids = false
+}
+```
+
+- boundId: `boolean`
+    - เปิดใช้งานการตรวจสอบ [Bound Id](./core.md#bindidentifier) สำหรับการแบนผู้เล่นอัตโนมัติเมื่อพบข้อมูลที่ตรงกับผู้เล่นที่ถูกแบน
+        - ⚠️ ไม่ทำงานหากปิดใช้งาน [`bindIdentifier`](./core.md#bindidentifier)
+- hwids: `boolean`
+    - เปิดใช้งานการตรวจสอบ [HWID Tokens](./core.md#banplayerhwids) สำหรับการแบนผู้เล่นอัตโนมัติเมื่อพบข้อมูลที่ตรงกับผู้เล่นที่ถูกแบน
+        - ⚠️ ไม่ทำงานหากปิดใช้งาน [`banPlayerHwids`](./core.md#banplayerhwids)
+
+## txAdminBanListener
+
+รับฟังเหตุการณ์ แบน หรือ ยกเลิกแบน จาก [txAdmin](https://txadmin.gg/) เพื่อจัดการการแบนและยกเลิกแบนภายในระบบของทรัพยากรนี้
+
+```lua title="บรรทัดที่ 64"
+txAdminBanListener = true
+```
+
+- txAdminBanListener: `boolean`
+    - เปิดใช้งานการรับฟังเหตุการณ์ แบน หรือ ยกเลิกแบน จาก [txAdmin](https://txadmin.gg/)
+
+:::warning
+
+รองรับ [txAdmin](https://txadmin.gg/) เวอร์ชัน 6.0 ขึ้นไป
+
+:::
+
+## obfuscateBannedIdentifier
+
+เปิดใช้งานการทำให้ตัวระบุที่ถูกแบนไม่สามารถอ่านได้ในข้อความแจ้งเตือน
+
+```lua title="บรรทัดที่ 67"
+obfuscateBannedIdentifier = true
+```
+
+- obfuscateBannedIdentifier: `boolean`
+    - เมื่อเปิดใช้งาน ตัวระบุที่ถูกแบนจะถูกแทนที่ด้วยรูปแบบที่ไม่สามารถอ่านได้ เช่น `discord:443334508020891658` จะกลายเป็น `XXXXXX-XXXXXX-XXXXXX`
+
+## inactivePlayers
+
+กำหนดค่าการตรวจสอบผู้เล่นที่ไม่ได้เข้าร่วมเซิร์ฟเวอร์ตามระยะเวลาที่กำหนด ผู้เล่นจะถูกระงับการใช้งานเมื่อครบระยะเวลาที่กำหนด
+
+```lua title="บรรทัดที่ 70"
+inactivePlayers = {
+    enable = false,
+    limitDays = 14
+}
+```
+
+- enable: `boolean`
+    - เปิดใช้งานการตรวจสอบผู้เล่นที่ไม่ได้เข้าร่วมเซิร์ฟเวอร์นานเกินวันที่กำหนด
+- limitDays: `integer`
+    - จำนวนวันที่ผู้เล่นไม่ได้เข้าร่วมเซิร์ฟเวอร์ก่อนที่จะถูกระงับ (หน่วยเป็น **วัน**)
+
+## airTimeServer
+
+ระบบจำกัดเวลาในการเล่น โดยผู้เล่นจะต้องเติม Airtime เพื่อเพิ่มเวลาในการเล่น
+
+```lua title="บรรทัดที่ 75"
+airTimeServer = {
+    enable = false, 
+    addTime = 86400 * 7,
+    kickTimeout = true 
+}
+```
+
+- enable: `boolean`
+    - เปิดใช้งานระบบแอร์ไทม์เซิฟเวอร์
+- addTime: `integer`
+    -  จำนวนเวลาที่จะเพิ่มให้กับผู้เล่นเมื่อเชื่อมต่อกับเซิร์ฟเวอร์ครั้งแรก (หน่วยเป็น **วินาที** และค่าเริ่มต้นคือ **7 วัน**)
+- kickTimeout: `boolean`
+    - เปิดใช้งานเตะผู้เล่นออกจากเซิร์ฟเวอร์หากหมดเวลาเล่น
+
+
+## newPlayerLabel
+
+ป้ายกำกับผู้เล่นใหม่ โดยจะแสดงข้อความบนส่วนหัวของผู้เล่น
+
+```lua title="บรรทัดที่ 81"
+newPlayerLabel = { 
+    enable = false,
+    durationDays = 7
+}
+```
+
+- enable: `boolean`
+    - เปิดใช้งานป้ายกำกับผู้เล่นใหม่
+- durationDays: `integer`
+    - ระยะเวลาที่ผู้เล่นจะถูกนับเป็นผู้เล่นใหม่นับตั้งแต่เข้าร่วมเซิร์ฟเวอร์ครั้งแรก (หน่วยเป็น **วัน**)
+
+:::tip
+
+คุณสามารถแก้ไขรหัสได้ที่ไฟล์ `./modules/player/client.lua` ฟังก์ชัน `Player.initNewbieLabel`
+
+:::
+
+## communityLink
+
+ลิงก์ของชุมชนจะถูกแสดงให้ผู้เล่นทราบเมื่อไม่มีสิทธิ์เข้าร่วมเซิร์ฟเวอร์หรือเกิดปัญหาอื่นๆ
+
+```lua title="บรรทัดที่ 86"
+communityLink = {
+    enable = true,
+    mainUrl = 'https://example.com',
+    registerUrl = 'https://example.com/register',
+    supportUrl = 'https://example.com/support'
+}
+```
+
+- enable: `boolean`
+    - เปิดใช้งานแสดงลิงก์ของชุมชน
+- mainUrl: `string`
+    - [URL](https://en.wikipedia.org/wiki/URL) หลักของเว็บไซต์หรือชุมชน
+- registerUrl: `string`
+    - [URL](https://en.wikipedia.org/wiki/URL) สำหรับลงทะเบียนหากผู้เล่นไม่มีสิทธิ์เข้าร่วมเซิร์ฟเวอร์
+- supportUrl: `string`
+    - [URL](https://en.wikipedia.org/wiki/URL) สำหรับติดต่อฝ่ายสนับสนุนหากพบปัญหาในการเชื่อมต่อกับเซิร์ฟเวอร์
+
+## awaitedResources
+
+ทรัพยากรที่ต้องประมวลผลให้เสร็จก่อนเมื่อผู้เล่นเชื่อมต่อ เพื่อป้องกันการทำงานทับซ้อนของ [deferrals.update](https://docs.fivem.net/docs/scripting-reference/events/list/playerconnecting/#updatemessage-string-void) หรือ [update.presentCard](https://docs.fivem.net/docs/scripting-reference/events/list/playerconnecting/#presentcardcard-object--string-cb-data-object-rawdata-string--void-void) จากทรัพยากรอื่น
+
+```lua title="บรรทัดที่ 93"
+awaitedResources = {
+    ['nc_PROTECT+'] = {
+        timeout = 15 
+    },
+    ['bt_defender'] = {
+        timeout = 15
+    }
+}
+```
+
+- `['resourceName']`: `table`
+    - ชื่อของทรัพยากร
+        - timeout: `integer`
+            - ระยะเวลาที่จะรอก่อนดำเนินการต่อ (หน่วยเป็น **วินาที**)
+
+:::warning
+
+- ทรัพยากรที่กำหนดจะต้องเรียกใช้ฟังก์ชัน [signalDeferredDone](../exports/server.md#signaldeferreddone) ก่อน หรือ หลัง การเรียก [deferrals.done](https://docs.fivem.net/docs/scripting-reference/events/list/playerconnecting/#donefailurereason-string-void)
+- หากไม่มีการเรียก [signalDeferredDone](../exports/server.md#signaldeferreddone) ระบบจะรอจนกว่าจะครบเวลา timeout ที่กำหนดไว้ ก่อนจะดำเนินการขั้นถัดไป
+
+:::
+
+## resourceBlocks
+
+บล็อกทรัพยากรที่ส่งผลต่อการทำงาน เช่น การควบคุมระบบคิว หรือ การตรวจสอบสิทธิ์การเชื่อมต่อกับเซิร์ฟเวอร์
+
+```lua title="บรรทัดที่ 105"
+resourceBlocks = {
+    'azael_dc-whitelisted',
+    'hardcap'
+}
+```
+
+- `string`: ชื่อทรัพยากรที่ต้องการบล็อก
+    - [azael_dc-whitelisted](https://github.com/Azael-Dev/azael-fivem-docs/tree/master/content/docs/azael_dc-whitelisted) ทรัพยากรนี้ในเวอร์ชันเก่า (**ล้าสมัย**)
+    - [hardcap](https://github.com/citizenfx/cfx-server-data/tree/master/resources/%5Bsystem%5D/hardcap) ทรัพยากรเกี่ยวกับระบบคิวเชื่อมต่อกับเซิร์ฟเวอร์
+
+## permissions
+
+กำหนดสิทธิ์ในการเข้าถึงและการข้ามข้อจำกัดต่างๆ
+
+```lua title="บรรทัดที่ 110"
+permissions = {
+    skipRules = { ... }
+}
+```
+
+- skipRules: `table`
+    - กำหนดสิทธิ์ที่อนุญาตให้ผู้เล่นข้ามการตรวจสอบและข้อจำกัดตามบทบาท
+
+### skipRules
+
+กำหนดสิทธิ์ที่อนุญาตให้ผู้เล่นข้ามการตรวจสอบและข้อจำกัดตามบทบาท
+
+```lua title="บรรทัดที่ 111"
+skipRules = {
+    ['full_queue_limit'] = {
+        PLAYER_ROLES.MODERATOR,
+        PLAYER_ROLES.ADMIN,
+        PLAYER_ROLES.DEVELOPER
+    },
+    ['conn_attempt_limit'] = {
+        PLAYER_ROLES.MODERATOR,
+        PLAYER_ROLES.ADMIN,
+        PLAYER_ROLES.DEVELOPER
+    },
+    ['max_ping_limit'] = {
+        PLAYER_ROLES.VIP,
+        PLAYER_ROLES.STAFF,
+        PLAYER_ROLES.MODERATOR,
+        PLAYER_ROLES.ADMIN,
+        PLAYER_ROLES.DEVELOPER
+    },
+    ['ban_hwids'] = {
+        PLAYER_ROLES.MODERATOR,
+        PLAYER_ROLES.ADMIN,
+        PLAYER_ROLES.DEVELOPER
+    },
+    ['ban_identifiers'] = {
+        PLAYER_ROLES.MODERATOR,
+        PLAYER_ROLES.ADMIN,
+        PLAYER_ROLES.DEVELOPER
+    },
+    ['inactive_players'] = {
+        PLAYER_ROLES.VIP,
+        PLAYER_ROLES.STAFF,
+        PLAYER_ROLES.MODERATOR,
+        PLAYER_ROLES.ADMIN,
+        PLAYER_ROLES.DEVELOPER
+    },
+    ['airtime_server'] = {
+        PLAYER_ROLES.MODERATOR,
+        PLAYER_ROLES.ADMIN,
+        PLAYER_ROLES.DEVELOPER
+    },
+    ['bind_identifier'] = {
+        PLAYER_ROLES.MODERATOR,
+        PLAYER_ROLES.ADMIN,
+        PLAYER_ROLES.DEVELOPER
+    },
+    ['maintenance_mode'] = {
+        PLAYER_ROLES.MODERATOR,
+        PLAYER_ROLES.ADMIN,
+        PLAYER_ROLES.DEVELOPER
+    }
+}
+```
+
+- `string`: `table<{ [index]: integer }>`
+    - รายการสิทธิ์ที่อนุญาตให้ผู้เล่นข้ามการตรวจสอบและข้อจำกัดตามบทบาท
+        - `full_queue_limit`: สามารถเข้าร่วมคิวได้หากจำนวนผู้เล่นในคิวเต็ม
+        - `conn_attempt_limit`: สามารถเชื่อมต่อได้หากพยายามเชื่อมต่อบ่อยหรือเร็วเกินกำหนด
+        - `max_ping_limit`: สามารถเชื่อมต่อได้หากค่า Ping สูงเกินกำหนด
+        - `ban_hwids`: สามารถเชื่อมต่อได้หากถูกแบน HWID Tokens
+        - `ban_identifiers`: สามารถเชื่อมต่อได้หากถูกแบน Identifiers
+        - `inactive_players`: สามารถเชื่อมต่อได้หากไม่ได้เชื่อมต่อมานานเกินกำหนด
+        - `airtime_server`: สามารถเชื่อมต่อได้หากไม่มีเวลาในการเล่น (ระบบ Airtime จำกัดเวลาในการเล่น)
+        - `bind_identifier`: สามารถเชื่อมต่อได้หากใช้ตัวระบุที่ไม่ตรงกับตัวระบุที่ผูกไว้ในฐานข้อมูล
+        - `maintenance_mode`: สามารถเชื่อมต่อได้หากเซิร์ฟเวอร์อยู่ในโหมดปิดปรับปรุงเซิร์ฟเวอร์ (โหมดบำรุงรักษา)
+
+:::tip
+
+ตัวแปร [**PLAYER_ROLES**](./setup.md#roles) คือข้อมูลการกำหนดค่าเกี่ยวกับบทบาทของผู้เล่น โดยอ้างอิงการกำหนดค่าที่ไฟล์ [`./config/setup.lua`](./setup.md)
+
+:::
+
+## azaelBanOptions
+
+ตัวเลือกการกำหนดค่าที่เกี่ยวข้องกับระบบแบนของผู้ให้บริการ [AZAEL](https://www.azael.dev/)
+
+### enableDataShare
+
+เปิดการแชร์ข้อมูลการแบนหรือยกเลิกแบนของผู้เล่นไปยังบริการ [BAN DB](https://bandb.azael.dev/)
+
+```lua title="บรรทัดที่ 164"
+azaelBanOptions = {
+    enableDataShare = true
+}
+```
+
+- enableDataShare: `boolean`
+    - เปิดการแชร์ข้อมูลการแบนหรือยกเลิกแบนของผู้เล่นไปยังบริการ [BAN DB](https://bandb.azael.dev/)
+
+:::warning
+**เมื่อเปิดใช้งาน คุณยินยอมให้ผู้ให้บริการสามารถเข้าถึงและจัดเก็บข้อมูลดังต่อไปนี้**
+- **Owner ID**:
+    - ไอดีเจ้าของ [CFX License Key](https://portal.cfx.re/) ที่กำลังใช้งาน
+- **Owner Name:**
+    - ชื่อเจ้าของ [CFX License Key](https://portal.cfx.re/) ที่กำลังใช้งาน
+- **Owner Avatar:**
+    - รูปอวาตาร์ของเจ้าของ [CFX License Key](https://portal.cfx.re/) ที่กำลังใช้งาน
+- **Server ID:**
+    - ไอดีเซิร์ฟเวอร์ เป็น ID อ้างอิง [CFX License Key](https://portal.cfx.re/) ที่กำลังใช้งาน
+- **Server Type:**
+    - ประเภทของเซิร์ฟเวอร์ เช่น `gta4`, `gta5`, `rdr3`
+- **Server Name:**
+    - ชื่อเซิร์ฟเวอร์จาก `sv_projectName` ที่กำหนดใน [server.cfg](https://docs.fivem.net/docs/server-manual/setting-up-a-server-vanilla/#servercfg)
+- **Ban Data:**
+    - ข้อมูลการแบน เช่น ตัวระบุผู้เล่น, ประเภทการแบน, เหตุผลการแบน, วันที่สิ้นสุดการแบน
+
+:::note
+
+ข้อมูลเหล่านี้เป็นข้อมูลสาธารณะที่สามารถเข้าถึงได้ผ่านระบบของ [Cfx.re](https://cfx.re/) และไม่ถือว่าเป็นความลับ
+
+:::
