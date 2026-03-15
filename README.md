@@ -1,4 +1,4 @@
-# Azael Docs
+# Friendly Fire Docs
 
 **[View the docs →](https://docs.azael.dev/)**
 
